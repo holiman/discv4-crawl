@@ -1,4 +1,4 @@
-FROM golang:latest
+FROM golang:alpine
 
 ENV CRAWL_GIT_REPO=https://github.com/skylenet/discv4-dns-lists.git \
     CRAWL_GIT_BRANCH=master \
@@ -23,8 +23,10 @@ ENV CRAWL_GIT_REPO=https://github.com/skylenet/discv4-dns-lists.git \
     INFLUXDB_USER=user \
     INFLUXDB_PASSWORD=password
 
-RUN apt-get update && apt-get install -y --no-install-recommends git curl jq
+RUN apk add --no-cache make gcc musl-dev linux-headers git curl jq
 
 WORKDIR /crawler
 ADD run.sh .
+ADD test.sh .
+RUN /bin/sh /crawler/test.sh
 CMD ["./run.sh"]
